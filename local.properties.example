@@ -1,0 +1,15 @@
+# Copy this file to local.properties (already git-ignored) and fill in real values.
+# local.properties is never committed — it's machine-specific and can hold secrets.
+
+# Path to your local Android SDK installation.
+#   Windows: sdk.dir=C\:\\Users\\<you>\\AppData\\Local\\Android\\Sdk
+#   macOS:   sdk.dir=/Users/<you>/Library/Android/sdk
+#   Linux:   sdk.dir=/home/<you>/Android/Sdk
+sdk.dir=
+
+# OPTIONAL, dev-only. Powers DirectGeminiLiveSession, a direct-to-Gemini transport
+# used only in local development builds (see shared/src/androidMain/kotlin/point/app/session/DirectGeminiLiveSession.android.kt).
+# Leave blank to skip it — the production AI path (AiLiveSession, via Firebase AI Logic)
+# does not need this key at all.
+# Get a key at https://aistudio.google.com/apikey — never commit it.
+GEMINI_API_KEY=
