@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -31,6 +33,7 @@ import point.app.design.ds
 import point.app.ui.foundation.BlinkingDot
 import point.app.ui.foundation.CameraBackground
 import point.app.ui.foundation.CircleGlassButton
+import point.app.ui.foundation.GradientButton
 import point.app.ui.foundation.LocalHazeState
 import point.app.ui.foundation.PText
 import point.app.ui.foundation.cameraVignette
@@ -66,6 +69,14 @@ fun CameraScreen(onClose: () -> Unit, onAsk: () -> Unit) {
                     CameraPreview(cam, Modifier.matchParentSize())
                 }
                 Box(Modifier.matchParentSize().cameraVignette())
+            }
+
+            if (perm == CameraPermission.DENIED) {
+                CameraPermissionDeniedPanel(
+                    onRetry = { cam.requestPermission() },
+                    onOpenSettings = { cam.openAppSettings() },
+                    modifier = Modifier.align(Alignment.Center).padding(horizontal = ds(28)),
+                )
             }
 
             point.app.ui.foundation.FocusHighlight(state.focusBox, state.frameAspect, Modifier.matchParentSize())
@@ -129,6 +140,43 @@ fun CameraScreen(onClose: () -> Unit, onAsk: () -> Unit) {
                 PText("What do you want to fix?", t.bodyMedium, c.ink)
                 MicButton(onClick = onAsk)
             }
+        }
+    }
+}
+
+@Composable
+private fun CameraPermissionDeniedPanel(
+    onRetry: () -> Unit,
+    onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val c = PointTheme.colors
+    val t = PointTheme.type
+    Column(
+        modifier
+            .glass(RoundedCornerShape(ds(24)), tint = c.glass80, border = c.stroke80)
+            .padding(ds(24)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(ds(16)),
+    ) {
+        PText(
+            "Point precisa da câmera para reconhecer a ferramenta",
+            t.bodyMedium,
+            c.ink,
+            align = TextAlign.Center,
+        )
+        PText(
+            "Você negou o acesso à câmera. Toque em tentar de novo, ou abra as configurações do app para ativar a permissão manualmente.",
+            t.caption,
+            c.ink.copy(alpha = 0.72f),
+            align = TextAlign.Center,
+        )
+        GradientButton(label = "Tentar novamente", onClick = onRetry, height = ds(52))
+        Row(
+            Modifier.fillMaxWidth().clickable(onClick = onOpenSettings),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            PText("Abrir configurações do app", t.caption, c.ink, align = TextAlign.Center)
         }
     }
 }

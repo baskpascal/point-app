@@ -83,6 +83,10 @@ private fun PointNavHost(nav: PointNavController) {
             when (dest) {
                 PointDestination.Splash -> SplashScreen(
                     onStart = {
+                        // Splash is the entry point of every new repair session — clear
+                        // whatever the previous session recognized/diagnosed/discussed
+                        // so the AI doesn't carry it into this one.
+                        vm.reset()
                         vm.setListening(true)
                         nav.navigate(PointDestination.LiveGuidance)
                     },

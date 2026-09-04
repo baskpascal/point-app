@@ -27,6 +27,9 @@ interface CameraController {
 
     /** Ask the OS for camera permission (no-op if already granted/denied-permanently). */
     fun requestPermission()
+
+    /** Opens the OS app-settings screen, for when permission was denied permanently. */
+    fun openAppSettings()
     fun start()
     fun stop()
 }

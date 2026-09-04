@@ -15,6 +15,7 @@ private class IosCameraStub : CameraController {
     override val isRunning: StateFlow<Boolean> = MutableStateFlow(false).asStateFlow()
     override val frames: SharedFlow<CameraFrame> = MutableSharedFlow()
     override fun requestPermission() {}
+    override fun openAppSettings() {}
     override fun start() {}
     override fun stop() {}
 }

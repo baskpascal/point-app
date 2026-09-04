@@ -2,7 +2,10 @@ package point.app.session
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import android.graphics.Bitmap
@@ -150,7 +153,19 @@ private class AndroidCameraController(
 
     override fun requestPermission() {
         if (_permission.value == CameraPermission.GRANTED) return
+        // Re-invoking the system launcher is safe even after a prior denial: Android
+        // shows the dialog again unless the user picked "Don't ask again" — in that
+        // case it just re-delivers `false` instantly, which is why we also expose
+        // openAppSettings() as a fallback the UI can offer.
         requestLauncher?.invoke()
+    }
+
+    override fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts("package", appContext.packageName, null)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        appContext.startActivity(intent)
     }
 
     override fun start() = bindIfReady()

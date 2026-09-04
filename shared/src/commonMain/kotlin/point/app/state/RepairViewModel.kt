@@ -64,6 +64,18 @@ class RepairViewModel(initial: RepairSessionState = RepairSessionState.EMPTY) : 
         if (aspect <= 0f || kotlin.math.abs(it.frameAspect - aspect) < 0.01f) it else it.copy(frameAspect = aspect)
     }
 
+    /**
+     * Clears the tool/diagnosis/conversation back to a fresh session. The
+     * [RepairViewModel] is a single app-lifetime instance (survives navigation and
+     * config changes), so without this, a new repair session inherits whatever the
+     * previous one recognized/diagnosed and the AI's transcript keeps growing —
+     * call this whenever a new repair session starts.
+     */
+    fun reset() {
+        streamingRole = null
+        _state.value = RepairSessionState.EMPTY
+    }
+
     private var streamingRole: Role? = null
 
     /** Merge a partial update from the AI session (Phase 8). */
