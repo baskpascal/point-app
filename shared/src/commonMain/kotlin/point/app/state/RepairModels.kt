@@ -64,6 +64,11 @@ data class RepairSessionState(
     /** width/height of the camera frames the model is receiving — used to map its
      *  normalised focus box onto the centre-cropped preview. */
     val frameAspect: Float = 0.75f,
+    /** Bumped by [point.app.state.RepairViewModel.reset]. isListening can go
+     *  true -> reset -> true again within one synchronous update, which a StateFlow
+     *  collector can conflate away; this gives RepairLiveController a key that's
+     *  guaranteed to change so it actually restarts the AI session. */
+    val sessionEpoch: Int = 0,
 ) {
     fun statusOf(index: Int): StepStatus = when {
         index < activeStepIndex -> StepStatus.COMPLETED

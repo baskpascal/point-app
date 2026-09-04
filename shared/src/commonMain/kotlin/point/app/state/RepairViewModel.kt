@@ -73,7 +73,7 @@ class RepairViewModel(initial: RepairSessionState = RepairSessionState.EMPTY) : 
      */
     fun reset() {
         streamingRole = null
-        _state.value = RepairSessionState.EMPTY
+        _state.update { RepairSessionState.EMPTY.copy(sessionEpoch = it.sessionEpoch + 1) }
     }
 
     private var streamingRole: Role? = null

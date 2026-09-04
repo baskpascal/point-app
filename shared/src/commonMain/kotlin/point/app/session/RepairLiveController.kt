@@ -37,12 +37,23 @@ fun RepairLiveController() {
     }
 
     // Start/stop the live session with the mic toggle; stream ~1 fps frames while live.
-    LaunchedEffect(listening.isListening) {
+    // Keyed on sessionEpoch too: reset() + setListening(true) can both land in one
+    // synchronous update (isListening ends up true -> true), which a plain
+    // isListening key would miss — sessionEpoch always changes, so this always
+    // relaunches for a new repair session. The `finally` makes sure the *previous*
+    // connection (if any) is actually torn down when that happens, not just the
+    // local coroutine cancelled — NonCancellable because this runs during
+    // cancellation cleanup, where a plain suspend call would be rejected instantly.
+    LaunchedEffect(listening.isListening, listening.sessionEpoch) {
         if (listening.isListening) {
-            ai.start()
-            cam.frames.collect { frame ->
-                ai.sendVideoFrame(frame.jpeg)
-                if (frame.height > 0) vm.setFrameAspect(frame.width.toFloat() / frame.height)
+            try {
+                ai.start()
+                cam.frames.collect { frame ->
+                    ai.sendVideoFrame(frame.jpeg)
+                    if (frame.height > 0) vm.setFrameAspect(frame.width.toFloat() / frame.height)
+                }
+            } finally {
+                kotlinx.coroutines.withContext(kotlinx.coroutines.NonCancellable) { ai.close() }
             }
         } else {
             ai.close()

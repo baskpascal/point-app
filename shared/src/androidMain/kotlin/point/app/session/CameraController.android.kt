@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -188,7 +190,17 @@ actual fun rememberCameraController(): CameraController {
 
     DisposableEffect(lifecycleOwner) {
         controller.attach(lifecycleOwner) { launcher.launch(Manifest.permission.CAMERA) }
-        onDispose { controller.detach() }
+        // If the user backed out to system Settings to grant the permission manually
+        // (the "open app settings" fallback below), the Activity's LifecycleOwner
+        // never changes — so re-check on every resume, not just once on attach.
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) controller.refreshPermission()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            controller.detach()
+        }
     }
     return controller
 }
