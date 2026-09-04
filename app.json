@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "Point",
+    "slug": "point",
+    "scheme": "point",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F7F7F5",
+    "splash": {
+      "backgroundColor": "#F7F7F5"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "android": {
+      "package": "com.point.repair",
+      "adaptiveIcon": {
+        "backgroundColor": "#F7F7F5"
+      },
+      "permissions": ["CAMERA", "RECORD_AUDIO"]
+    },
+    "ios": {
+      "bundleIdentifier": "com.point.repair",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Point uses your camera to recognize the tool you want to repair.",
+        "NSMicrophoneUsageDescription": "Point uses your microphone so you can ask what to fix by voice."
+      }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Point uses your camera to recognize the tool you want to repair.",
+          "microphonePermission": "Point uses your microphone so you can ask what to fix by voice."
+        }
+      ]
+    ]
+  }
+}
